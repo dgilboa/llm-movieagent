@@ -26,13 +26,14 @@ WITH m, "type:" + labels(m)[0] + "\ntitle: "+ coalesce(m.title, m.name)
 RETURN context LIMIT 1
 """
 
-ids = IDS("localhost:9999")
-
+# working with local ids server Dan created
+ids = IDS("http://localhost:8088")
 
 def get_information(entity: str, type: str) -> str:
     if type == "vertex":
-        return "type:Vertex\n name:Dror"
-        # return asdict(ids.get_vertex(entity))
+        res = ids.get_vertex(entity)
+        print("Result we got from IDS :" + res.value)
+        return f"id_type:{res.id_type} \n value:{res.value}"
     elif type == "edge":
         return "Edges information not yet supported"
     else:
