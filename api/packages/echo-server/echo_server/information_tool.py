@@ -9,6 +9,10 @@ from langchain.callbacks.manager import (
 from langchain.pydantic_v1 import BaseModel, Field
 from langchain.tools import BaseTool
 
+from dataclasses import asdict
+from echo_server.ids import IDS
+
+
 description_query = """
 MATCH (m:Movie|Person)
 WHERE m.title = $candidate OR m.name = $candidate
@@ -22,10 +26,19 @@ WITH m, "type:" + labels(m)[0] + "\ntitle: "+ coalesce(m.title, m.name)
 RETURN context LIMIT 1
 """
 
+ids = IDS("localhost:9999")
+
 
 def get_information(entity: str, type: str) -> str:
+    if type == "vertex":
+        return "type:Vertex\n name:Dror"
+        # return asdict(ids.get_vertex(entity))
+    elif type == "edge":
+        return "Edges information not yet supported"
+    else:
+        return "Unidentified type " + type
+
     # return "echo" + entity + " \n Type:"+type
-    return "type:Vertex\n name:Dror"
     # candidates = get_candidates(entity, type)
     # print("Candidates: ", candidates)
     # if not candidates:

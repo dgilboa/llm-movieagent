@@ -12,6 +12,7 @@ readme = "README.md"
 python = ">=3.9,<4.0"
 langchain = ">=0.0.353,<0.2"
 openai = "<2"
+requests = "^2.31.0"
 
 [tool.langserve]
 export_module = "echo-server"
