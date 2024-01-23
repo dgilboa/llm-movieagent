@@ -8,7 +8,8 @@ import asyncio
 
 logger = get_logger(__name__)
 
-st.title("Movie agent")
+# st.title("Movie agent")
+st.title("Echo agent")
 
 
 class StreamHandler:
@@ -45,14 +46,14 @@ if st.session_state["generated"]:
 
 
 async def get_agent_response(
+    url: str,
     input: str, stream_handler: StreamHandler, chat_history: Optional[List[Tuple]] = []
 ):
-    url = "http://api:8080/movie-agent/"
+    # url = "http://api:8080/movie-agent/"
     st.session_state["generated"].append("")
     remote_runnable = RemoteRunnable(url)
-    async for chunk in remote_runnable.astream_log(
-        {"input": input, "chat_history": chat_history}
-    ):
+    async for chunk in \
+            remote_runnable.astream_log({"input": input, "chat_history": chat_history}):
         log_entry = chunk.ops[0]
         value = log_entry.get("value")
         if isinstance(value, dict) and isinstance(value.get("steps"), list):
@@ -89,9 +90,11 @@ if prompt := st.chat_input("How can I help you today?"):
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     # Run the asynchronous function within the event loop
-    loop.run_until_complete(get_agent_response(prompt, stream_handler, chat_history))
+    movie_agent_url = "http://api:8080/movie-agent/"
+    ids_agent_url = "http://api:8080/echo-server/"
+    loop.run_until_complete(get_agent_response(ids_agent_url, prompt, stream_handler, chat_history))
     # Close the event loop
     loop.close()
     status.update(label="Finished!", state="complete", expanded=False)
     # Add user message to chat history
-    st.session_state.user_input.append(prompt)
+    st.session_state.user_input.append("You Asked for" + "\n" + prompt + "\n")

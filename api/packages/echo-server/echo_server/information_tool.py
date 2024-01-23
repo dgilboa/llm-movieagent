@@ -9,8 +9,6 @@ from langchain.callbacks.manager import (
 from langchain.pydantic_v1 import BaseModel, Field
 from langchain.tools import BaseTool
 
-from neo4j_semantic_layer.utils import get_candidates, graph
-
 description_query = """
 MATCH (m:Movie|Person)
 WHERE m.title = $candidate OR m.name = $candidate
@@ -26,34 +24,36 @@ RETURN context LIMIT 1
 
 
 def get_information(entity: str, type: str) -> str:
-    candidates = get_candidates(entity, type)
-    print("Candidates: ", candidates)
-    if not candidates:
-        return "No information was found about the movie or person in the database"
-    elif len(candidates) > 1:
-        newline = "\n"
-        return (
-            "Need additional information, which of these "
-            f"did you mean: {newline + newline.join(str(d) for d in candidates)}"
-        )
-    data = graph.query(
-        description_query, params={"candidate": candidates[0]["candidate"]}
-    )
-    print("get_info: ", data)
-    return data[0]["context"]
+    # return "echo" + entity + " \n Type:"+type
+    return "type:Vertex\n name:Dror"
+    # candidates = get_candidates(entity, type)
+    # print("Candidates: ", candidates)
+    # if not candidates:
+    #     return "No information was found about the movie or person in the database"
+    # elif len(candidates) > 1:
+    #     newline = "\n"
+    #     return (
+    #         "Need additional information, which of these "
+    #         f"did you mean: {newline + newline.join(str(d) for d in candidates)}"
+    #     )
+    # data = graph.query(
+    #     description_query, params={"candidate": candidates[0]["candidate"]}
+    # )
+    # print("get_info: ", data)
+    # return data[0]["context"]
 
 
 class InformationInput(BaseModel):
-    entity: str = Field(description="movie or a person mentioned in the question")
+    entity: str = Field(description="vertex or an edge mentioned in the question")
     entity_type: str = Field(
-        description="type of the entity. Available options are 'movie' or 'person'"
+        description="type of the entity. Available options are 'vertex' or 'edge'"
     )
 
 
 class InformationTool(BaseTool):
-    name = "Information"
+    name = "Info"
     description = (
-        "useful for when you need to answer questions about various actors or movies"
+        "useful for when you need to answer questions about various vertices or edges"
     )
     args_schema: Type[BaseModel] = InformationInput
 

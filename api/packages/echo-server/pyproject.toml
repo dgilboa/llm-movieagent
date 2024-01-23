@@ -1,0 +1,30 @@
+[tool.poetry]
+name = "echo-server"
+version = "0.1.0"
+description = "Build a semantic layer to allow an agent to interact with ids in consistent and robust way."
+authors = [
+    "Dror Gilboa <dror@lightricks.com>",
+    "Dan Saban <dsaban@lightricks.com>",
+]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.9,<4.0"
+langchain = ">=0.0.353,<0.2"
+openai = "<2"
+
+[tool.langserve]
+export_module = "echo-server"
+export_attr = "agent_executor"
+
+[tool.templates-hub]
+use-case = "semantic_layer"
+author = "IDS"
+integrations = ["OpenAI"]
+tags = ["search", "graph-database", "function-calling"]
+
+[build-system]
+requires = [
+    "poetry-core",
+]
+build-backend = "poetry.core.masonry.api"
