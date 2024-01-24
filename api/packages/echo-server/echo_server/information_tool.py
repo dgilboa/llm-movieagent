@@ -13,19 +13,6 @@ from dataclasses import asdict
 from echo_server.ids import IDS
 
 
-description_query = """
-MATCH (m:Movie|Person)
-WHERE m.title = $candidate OR m.name = $candidate
-MATCH (m)-[r:ACTED_IN|DIRECTED|HAS_GENRE]-(t)
-WITH m, type(r) as type, collect(coalesce(t.name, t.title)) as names
-WITH m, type+": "+reduce(s="", n IN names | s + n + ", ") as types
-WITH m, collect(types) as contexts
-WITH m, "type:" + labels(m)[0] + "\ntitle: "+ coalesce(m.title, m.name) 
-       + "\nyear: "+coalesce(m.released,"") +"\n" +
-       reduce(s="", c in contexts | s + substring(c, 0, size(c)-2) +"\n") as context
-RETURN context LIMIT 1
-"""
-
 # working with local ids server Dan created
 ids = IDS("http://localhost:8088")
 

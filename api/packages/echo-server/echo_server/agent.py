@@ -16,6 +16,11 @@ llm = ChatOpenAI(temperature=0, model="gpt-4", streaming=True)
 # This is unique - which tool to use
 tools = [InformationTool()]
 
+# tools = load_tools(
+#     ["graphql"],
+#     graphql_endpoint="https://swapi-graphql.netlify.app/.netlify/functions/index",
+# )
+
 llm_with_tools = llm.bind(functions=[format_tool_to_openai_function(t) for t in tools])
 
 # This is unique - base prompt
@@ -73,6 +78,6 @@ class Output(BaseModel):
     output: Any
 
 
-agent_executor = AgentExecutor(agent=agent, tools=tools, verbose=True).with_types(
-    input_type=AgentInput, output_type=Output
-)
+agent_executor = \
+    AgentExecutor(agent=agent, tools=tools, verbose=True)\
+        .with_types(input_type=AgentInput, output_type=Output)
